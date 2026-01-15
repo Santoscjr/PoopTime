@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PoopTime</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>PoopTime</h1>
+        <p>Calcule o valor do seu tempo no banheiro! 🚽</p>
+    </header>
+    <main>
+        <section id="input-section">
+            <h2>Insira seus dados 💰</h2>
+            <form id="data-form">
+                <label for="salary">Salário mensal (R$):</label>
+                <input type="text" id="salary" placeholder="Ex: 3000,00" required>
+                
+                <label for="hours">Horas trabalhadas por semana:</label>
+                <input type="number" id="hours" placeholder="Ex: 40" required>
+                
+                <button type="submit">Calcular Valor por Minuto</button>
+            </form>
+            <p id="value-per-minute">Valor por minuto: R$ 0.00</p>
+        </section>
+        
+        <section id="timer-section">
+            <h2>Cronômetro 💩</h2>
+            <p id="timer-display">00:00:00</p>
+            <p id="accumulated-value">Valor acumulado: R$ 0.00</p>
+            <button id="start-btn" disabled>Iniciar</button>
+            <button id="stop-btn" disabled>Parar</button>
+            <button id="reset-btn">Reset</button>
+        </section>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -7,34 +7,178 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-        <h1>PoopTime</h1>
-        <p>Calcule o valor do seu tempo no banheiro! 🚽</p>
-    </header>
-    <main>
-        <section id="input-section">
-            <h2>Insira seus dados 💰</h2>
-            <form id="data-form">
-                <label for="salary">Salário mensal (R$):</label>
-                <input type="text" id="salary" placeholder="Ex: 3000,00" required>
-                
-                <label for="hours">Horas trabalhadas por semana:</label>
-                <input type="number" id="hours" placeholder="Ex: 40" required>
-                
-                <button type="submit">Calcular Valor por Minuto</button>
-            </form>
-            <p id="value-per-minute">Valor por minuto: R$ 0.00</p>
-        </section>
-        
-        <section id="timer-section">
-            <h2>Cronômetro 💩</h2>
-            <p id="timer-display">00:00:00</p>
-            <p id="accumulated-value">Valor acumulado: R$ 0.00</p>
-            <button id="start-btn" disabled>Iniciar</button>
-            <button id="stop-btn" disabled>Parar</button>
-            <button id="reset-btn">Reset</button>
-        </section>
-    </main>
+    <!-- From Uiverse.io by ariba_9087 -->
+    <div class="container"></div>
+    <div class="content">
+        <header>
+            <h1>PoopTime</h1>
+            <p>Calcule o valor do seu tempo no banheiro! 🚽</p>
+        </header>
+        <main>
+        <div class="card">
+            <section id="input-section">
+                <h2>Insira seus dados 💰</h2>
+                <form id="data-form">
+                    <label for="salary">Salário mensal (R$):</label>
+                    <input type="text" id="salary" placeholder="Ex: 3000,00" required>
+                    
+                    <label for="hours">Horas trabalhadas por semana:</label>
+                    <input type="number" id="hours" placeholder="Ex: 40" required>
+                    
+                    <!-- From Uiverse.io by dpaulos6 -->
+                    <button type="submit" class="c-button c-button--gooey">Calcular
+                        <div class="c-button__blobs">
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div>
+                    </button>
+                </form>
+                <p id="value-per-minute">Valor por minuto: R$ 0.00</p>
+            </section>
+        </div>
+
+        <div class="card">
+            <section id="bonuses-section">
+                <h2>Adicionais e Horas Extras 💼 <button id="toggle-bonuses" class="c-button c-button--gooey">Mostrar
+                    <div class="c-button__blobs">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                </button></h2>
+                <div id="bonus-content" class="bonus-content hidden">
+                    <div class="bonus-group">
+                        <h3>Horas Extras</h3>
+                        <div class="bonus-toggles">
+                            <div class="toggle-item">
+                                <label for="overtime-50-checkbox">50%</label>
+                                <div class="toggle-button-cover">
+                                    <div id="overtime-50-toggle" class="button r">
+                                        <input class="checkbox" type="checkbox" id="overtime-50-checkbox">
+                                        <div class="knobs"></div>
+                                        <div class="layer"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="toggle-item">
+                                <label for="overtime-100-checkbox">100%</label>
+                                <div class="toggle-button-cover">
+                                    <div id="overtime-100-toggle" class="button r">
+                                        <input class="checkbox" type="checkbox" id="overtime-100-checkbox">
+                                        <div class="knobs"></div>
+                                        <div class="layer"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bonus-group">
+                        <h3>Adicionais</h3>
+                        <div class="bonus-toggles">
+                            <div class="toggle-item">
+                                <label for="danger-checkbox">Periculosidade 30%</label>
+                                <div class="toggle-button-cover">
+                                    <div id="danger-toggle" class="button r">
+                                        <input class="checkbox" type="checkbox" id="danger-checkbox">
+                                        <div class="knobs"></div>
+                                        <div class="layer"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bonus-group">
+                        <h3>Insalubridade</h3>
+                        <div class="bonus-toggles">
+                            <div class="toggle-item">
+                                <label for="unhealthy-max-checkbox">Máxima 40%</label>
+                                <div class="toggle-button-cover">
+                                    <div id="unhealthy-max-toggle" class="button r">
+                                        <input class="checkbox" type="checkbox" id="unhealthy-max-checkbox">
+                                        <div class="knobs"></div>
+                                        <div class="layer"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="toggle-item">
+                                <label for="unhealthy-med-checkbox">Média 20%</label>
+                                <div class="toggle-button-cover">
+                                    <div id="unhealthy-med-toggle" class="button r">
+                                        <input class="checkbox" type="checkbox" id="unhealthy-med-checkbox">
+                                        <div class="knobs"></div>
+                                        <div class="layer"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="toggle-item">
+                                <label for="unhealthy-min-checkbox">Mínima 10%</label>
+                                <div class="toggle-button-cover">
+                                    <div id="unhealthy-min-toggle" class="button r">
+                                        <input class="checkbox" type="checkbox" id="unhealthy-min-checkbox">
+                                        <div class="knobs"></div>
+                                        <div class="layer"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bonus-group">
+                        <h3>Adicional Noturno</h3>
+                        <div class="bonus-toggles">
+                            <div class="toggle-item">
+                                <label for="night-checkbox">Noturno 20%</label>
+                                <div class="toggle-button-cover">
+                                    <div id="night-toggle" class="button r">
+                                        <input class="checkbox" type="checkbox" id="night-checkbox">
+                                        <div class="knobs"></div>
+                                        <div class="layer"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="card">
+            <section id="timer-section">
+                <h2>Cronômetro 💩</h2>
+                <p id="timer-display">00:00:00</p>
+                <p id="accumulated-value">Valor acumulado: R$ 0.00</p>
+                <button id="start-btn" disabled>Iniciar</button>
+                <button id="stop-btn" disabled>Parar</button>
+                <button id="reset-btn">Reset</button>
+            </section>
+        </div>
+        </main>
+    </div>
+    <svg
+        style="display: block; height: 0; width: 0;"
+        version="1.1"
+        xmlns="http://www.w3.org/2000/svg"
+    >
+        <defs>
+            <filter id="goo">
+                <feGaussianBlur
+                    result="blur"
+                    stdDeviation="10"
+                    in="SourceGraphic"
+                ></feGaussianBlur>
+                <feColorMatrix
+                    result="goo"
+                    values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7"
+                    mode="matrix"
+                    in="blur"
+                ></feColorMatrix>
+                <feBlend in2="goo" in="SourceGraphic"></feBlend>
+            </filter>
+        </defs>
+    </svg>
     <script src="script.js"></script>
 </body>
 </html>

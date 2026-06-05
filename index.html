@@ -1,231 +1,603 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#ffd2a6">
-    <meta name="description" content="PoopTime — descubra quanto dinheiro você fatura sentado no trono durante o expediente. 🚽💸">
-    <title>PoopTime 💩 — Fature no Trono</title>
+/* ===========================================================
+   PoopTime — tema "claymorphism" quentinho 💩💰
+   =========================================================== */
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,700&display=swap" rel="stylesheet">
+:root {
+    /* superfícies */
+    --cream:      #fff7ec;
+    --cream-2:    #fff0dc;
+    --sand:       #ffe7cb;
+    --peach:      #ffd2a6;
+    --apricot:    #ffbe85;
 
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💩</text></svg>">
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <!-- Atmosfera de fundo -->
-    <div class="bg" aria-hidden="true">
-        <span class="blob blob--gold"></span>
-        <span class="blob blob--mint"></span>
-        <span class="blob blob--peach"></span>
-        <div class="bg-emojis">
-            <span style="--d:0s;  --x:8vw;  --s:1.1">💩</span>
-            <span style="--d:5s;  --x:22vw; --s:.7">🪙</span>
-            <span style="--d:2s;  --x:42vw; --s:.9">🧻</span>
-            <span style="--d:8s;  --x:63vw; --s:1.2">💰</span>
-            <span style="--d:3s;  --x:78vw; --s:.8">🪙</span>
-            <span style="--d:6s;  --x:90vw; --s:1">💩</span>
-        </div>
-    </div>
+    /* marcas */
+    --choco:      #5b3a21;
+    --choco-soft: #8a5a34;
+    --caramel:    #b97a3e;
+    --gold:       #ffb302;
+    --gold-deep:  #e08a00;
+    --mint:       #28c4a0;
+    --mint-deep:  #149a7c;
+    --cherry:     #ff5d6c;
 
-    <!-- Botão de som -->
-    <button id="sound-toggle" class="sound-toggle" type="button" aria-label="Ativar ou desativar sons" title="Sons">🔊</button>
+    /* texto */
+    --ink:        #4a2f1c;
+    --ink-soft:   #8a6a4f;
 
-    <header class="hero">
-        <div class="hero__badge" aria-hidden="true">
-            <span class="hero__poop">💩</span>
-            <span class="hero__coin">🪙</span>
-        </div>
-        <h1 class="hero__title">Poop<span>Time</span></h1>
-        <p class="hero__tag">Descubra quanto você <strong>fatura sentado no trono</strong> 🚽💸</p>
-    </header>
+    /* sombras clay */
+    --clay-shadow:
+        10px 10px 24px rgba(150, 92, 40, 0.20),
+        -8px -8px 20px rgba(255, 255, 255, 0.85);
+    --clay-inset:
+        inset 2px 2px 4px rgba(255, 255, 255, 0.7),
+        inset -4px -4px 10px rgba(150, 92, 40, 0.12);
 
-    <!-- Barra de estatísticas (recordes de todos os tempos) -->
-    <section class="stats" aria-label="Suas estatísticas de todos os tempos">
-        <div class="stat">
-            <span class="stat__icon">💰</span>
-            <span class="stat__value" id="stat-total">R$ 0,00</span>
-            <span class="stat__label">Faturado no total</span>
-        </div>
-        <div class="stat">
-            <span class="stat__icon">🚽</span>
-            <span class="stat__value" id="stat-sessions">0</span>
-            <span class="stat__label">Idas ao trono</span>
-        </div>
-        <div class="stat">
-            <span class="stat__icon">⏱️</span>
-            <span class="stat__value" id="stat-time">00:00:00</span>
-            <span class="stat__label">Tempo total</span>
-        </div>
-        <div class="stat">
-            <span class="stat__icon">🏆</span>
-            <span class="stat__value" id="stat-record">R$ 0,00</span>
-            <span class="stat__label">Recorde numa ida</span>
-        </div>
-    </section>
+    --radius: 28px;
+    --radius-sm: 16px;
+    --ease-bounce: cubic-bezier(.34, 1.56, .64, 1);
+}
 
-    <main>
-        <!-- CARD 1 — DADOS -->
-        <section class="card" id="input-section">
-            <div class="card__step">1</div>
-            <h2>Seus ganhos <span aria-hidden="true">💵</span></h2>
-            <form id="data-form" novalidate>
-                <div class="field">
-                    <label for="salary">Salário mensal</label>
-                    <div class="input-wrap" data-prefix="R$">
-                        <input type="text" id="salary" inputmode="decimal" placeholder="3.000,00" autocomplete="off" required>
-                    </div>
-                </div>
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-                <div class="field">
-                    <label for="hours">Horas trabalhadas por semana</label>
-                    <div class="input-wrap" data-prefix="⏰">
-                        <input type="number" id="hours" inputmode="numeric" placeholder="44" min="1" max="80" step="1" required>
-                    </div>
-                </div>
+html { scroll-behavior: smooth; }
 
-                <p class="form-error" id="form-error" role="alert" hidden></p>
+body {
+    min-height: 100vh;
+    font-family: 'Nunito', system-ui, sans-serif;
+    color: var(--ink);
+    line-height: 1.6;
+    background:
+        radial-gradient(1200px 600px at 50% -10%, #fff4e2 0%, transparent 60%),
+        linear-gradient(160deg, #ffe6cc 0%, #ffd2a6 45%, #ffc79a 100%);
+    background-attachment: fixed;
+    overflow-x: hidden;
+}
 
-                <button type="submit" class="btn btn--primary">
-                    <span>Calcular meu trono</span> <span aria-hidden="true">🧮</span>
-                </button>
-            </form>
+/* ---------- Atmosfera de fundo ---------- */
+.bg { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
 
-            <div class="rate" id="rate-box">
-                <span class="rate__label">Você fatura</span>
-                <span class="rate__value" id="rate-min">R$ 0,00</span>
-                <span class="rate__unit">por minuto sentado 💩</span>
-                <span class="rate__sub" id="rate-extra">preencha seus dados para começar</span>
-            </div>
-        </section>
+.blob {
+    position: absolute;
+    width: 46vmax; height: 46vmax;
+    border-radius: 50%;
+    filter: blur(70px);
+    opacity: .55;
+    animation: float-blob 18s ease-in-out infinite;
+}
+.blob--gold  { background: #ffd76b; top: -12vmax; left: -10vmax; }
+.blob--mint  { background: #74e8cf; bottom: -16vmax; right: -8vmax; animation-delay: -6s; }
+.blob--peach { background: #ff9e7d; top: 35%; right: 20%; opacity: .35; animation-delay: -11s; }
 
-        <!-- CARD 2 — ADICIONAIS -->
-        <section class="card" id="bonuses-section">
-            <div class="card__step">2</div>
-            <h2 class="card__head-flex">
-                <span>Adicionais da CLT <span aria-hidden="true">💼</span></span>
-                <button id="toggle-bonuses" class="btn btn--ghost btn--sm" type="button" aria-expanded="false">Mostrar</button>
-            </h2>
-            <p class="card__hint">Trabalha em condição especial? Some os adicionais e veja o trono render mais. 😏</p>
+@keyframes float-blob {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33%      { transform: translate(6vmax, 4vmax) scale(1.08); }
+    66%      { transform: translate(-5vmax, 3vmax) scale(.95); }
+}
 
-            <div id="bonus-content" class="bonus-content" hidden>
-                <div class="bonus-group">
-                    <h3>🕒 Horas extras</h3>
-                    <div class="toggle-grid">
-                        <label class="toggle">
-                            <input type="checkbox" data-bonus="overtime50" data-rate="0.5" data-group="overtime">
-                            <span class="toggle__track"><span class="toggle__thumb"></span></span>
-                            <span class="toggle__text">50%</span>
-                        </label>
-                        <label class="toggle">
-                            <input type="checkbox" data-bonus="overtime100" data-rate="1" data-group="overtime">
-                            <span class="toggle__track"><span class="toggle__thumb"></span></span>
-                            <span class="toggle__text">100%</span>
-                        </label>
-                    </div>
-                </div>
+.bg-emojis span {
+    position: absolute;
+    top: -10vh;
+    left: var(--x);
+    font-size: calc(2.2rem * var(--s, 1));
+    opacity: .18;
+    animation: rain 16s linear infinite;
+    animation-delay: var(--d);
+}
+@keyframes rain {
+    0%   { transform: translateY(-10vh) rotate(0deg); }
+    100% { transform: translateY(115vh) rotate(360deg); }
+}
 
-                <div class="bonus-group">
-                    <h3>⚠️ Periculosidade</h3>
-                    <div class="toggle-grid">
-                        <label class="toggle">
-                            <input type="checkbox" data-bonus="danger" data-rate="0.3">
-                            <span class="toggle__track"><span class="toggle__thumb"></span></span>
-                            <span class="toggle__text">30%</span>
-                        </label>
-                    </div>
-                </div>
+/* ---------- Botão de som ---------- */
+.sound-toggle {
+    position: fixed; top: 16px; right: 16px; z-index: 50;
+    width: 50px; height: 50px;
+    font-size: 1.4rem;
+    border: none; border-radius: 50%;
+    background: var(--cream);
+    box-shadow: var(--clay-shadow);
+    cursor: pointer;
+    transition: transform .2s var(--ease-bounce);
+}
+.sound-toggle:hover  { transform: scale(1.1) rotate(-8deg); }
+.sound-toggle:active { transform: scale(.92); }
+.sound-toggle.is-muted { opacity: .55; filter: grayscale(.6); }
 
-                <div class="bonus-group">
-                    <h3>☣️ Insalubridade</h3>
-                    <div class="toggle-grid">
-                        <label class="toggle">
-                            <input type="checkbox" data-bonus="unhealthyMax" data-rate="0.4" data-group="unhealthy">
-                            <span class="toggle__track"><span class="toggle__thumb"></span></span>
-                            <span class="toggle__text">Máxima 40%</span>
-                        </label>
-                        <label class="toggle">
-                            <input type="checkbox" data-bonus="unhealthyMed" data-rate="0.2" data-group="unhealthy">
-                            <span class="toggle__track"><span class="toggle__thumb"></span></span>
-                            <span class="toggle__text">Média 20%</span>
-                        </label>
-                        <label class="toggle">
-                            <input type="checkbox" data-bonus="unhealthyMin" data-rate="0.1" data-group="unhealthy">
-                            <span class="toggle__track"><span class="toggle__thumb"></span></span>
-                            <span class="toggle__text">Mínima 10%</span>
-                        </label>
-                    </div>
-                </div>
+/* ---------- Cabeçalho ---------- */
+.hero { text-align: center; padding: 40px 20px 10px; }
 
-                <div class="bonus-group">
-                    <h3>🌙 Adicional noturno</h3>
-                    <div class="toggle-grid">
-                        <label class="toggle">
-                            <input type="checkbox" data-bonus="night" data-rate="0.2">
-                            <span class="toggle__track"><span class="toggle__thumb"></span></span>
-                            <span class="toggle__text">Noturno 20%</span>
-                        </label>
-                    </div>
-                </div>
-            </div>
-        </section>
+.hero__badge {
+    position: relative;
+    width: 110px; height: 110px;
+    margin: 0 auto 6px;
+    display: grid; place-items: center;
+    background: radial-gradient(circle at 35% 30%, #fff, var(--sand));
+    border-radius: 50%;
+    box-shadow: var(--clay-shadow), var(--clay-inset);
+    animation: bob 3.4s ease-in-out infinite;
+}
+.hero__poop { font-size: 3.6rem; filter: drop-shadow(0 6px 6px rgba(91,58,33,.35)); }
+.hero__coin {
+    position: absolute; right: 6px; bottom: 8px;
+    font-size: 1.6rem;
+    animation: pop-coin 2.2s ease-in-out infinite;
+}
+@keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+@keyframes pop-coin {
+    0%, 100% { transform: translateY(0) rotate(0); }
+    50%      { transform: translateY(-8px) rotate(20deg); }
+}
 
-        <!-- CARD 3 — TRONO / CRONÔMETRO -->
-        <section class="card card--throne" id="timer-section">
-            <div class="card__step">3</div>
-            <h2>O Trono <span aria-hidden="true">👑</span></h2>
+.hero__title {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 700;
+    font-size: clamp(2.8rem, 9vw, 4.6rem);
+    line-height: 1;
+    letter-spacing: -1px;
+    color: var(--choco);
+    text-shadow: 0 3px 0 #fff, 0 6px 14px rgba(150, 92, 40, .25);
+}
+.hero__title span {
+    background: linear-gradient(180deg, var(--gold), var(--gold-deep));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.hero__tag {
+    margin-top: 8px;
+    font-size: clamp(1rem, 3.4vw, 1.2rem);
+    color: var(--choco-soft);
+    font-weight: 600;
+}
+.hero__tag strong { color: var(--mint-deep); }
 
-            <div class="mascot" id="mascot" aria-hidden="true">
-                <span class="mascot__poop">💩</span>
-                <span class="mascot__ring"></span>
-            </div>
+/* ---------- Barra de estatísticas ---------- */
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    max-width: 760px;
+    margin: 22px auto 8px;
+    padding: 0 16px;
+}
+.stat {
+    background: var(--cream);
+    border-radius: var(--radius-sm);
+    padding: 14px 8px;
+    text-align: center;
+    box-shadow: var(--clay-shadow);
+    transition: transform .25s var(--ease-bounce);
+}
+.stat:hover { transform: translateY(-4px); }
+.stat__icon  { font-size: 1.5rem; display: block; }
+.stat__value {
+    display: block;
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: clamp(.95rem, 2.6vw, 1.3rem);
+    color: var(--choco);
+    font-variant-numeric: tabular-nums;
+    margin-top: 2px;
+}
+.stat__value.pulse { animation: pulse-val .5s var(--ease-bounce); }
+@keyframes pulse-val {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.25); color: var(--gold-deep); }
+    100% { transform: scale(1); }
+}
+.stat__label { font-size: .72rem; color: var(--ink-soft); font-weight: 700; text-transform: uppercase; letter-spacing: .3px; }
 
-            <p class="timer" id="timer-display">00:00:00</p>
+/* ---------- Layout principal ---------- */
+main {
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
 
-            <div class="earnings">
-                <span class="earnings__label">Faturado nesta sentada</span>
-                <span class="earnings__value" id="accumulated-value">R$ 0,00</span>
-            </div>
+/* ---------- Cards ---------- */
+.card {
+    position: relative;
+    background: var(--cream);
+    border-radius: var(--radius);
+    padding: 26px 24px;
+    box-shadow: var(--clay-shadow);
+    animation: rise .6s var(--ease-bounce) both;
+}
+main .card:nth-child(1) { animation-delay: .05s; }
+main .card:nth-child(2) { animation-delay: .12s; }
+main .card:nth-child(3) { animation-delay: .19s; }
+main .card:nth-child(4) { animation-delay: .26s; }
+@keyframes rise {
+    from { opacity: 0; transform: translateY(26px) scale(.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
 
-            <!-- Recompensa / progresso -->
-            <div class="reward" id="reward">
-                <p class="reward__line" id="reward-current">Comece a contar pra ver o que dá pra comprar 🍔</p>
-                <div class="reward__bar"><span class="reward__fill" id="reward-fill"></span></div>
-                <p class="reward__next" id="reward-next"></p>
-            </div>
+.card__step {
+    position: absolute;
+    top: -14px; left: 22px;
+    width: 38px; height: 38px;
+    display: grid; place-items: center;
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(180deg, var(--mint), var(--mint-deep));
+    border-radius: 50%;
+    box-shadow: 4px 4px 10px rgba(20,154,124,.4), var(--clay-inset);
+}
 
-            <div class="throne-actions">
-                <button id="start-btn" class="btn btn--primary btn--lg" type="button" disabled>
-                    <span aria-hidden="true">▶️</span> <span id="start-label">Sentar</span>
-                </button>
-                <button id="flush-btn" class="btn btn--flush btn--lg" type="button" disabled>
-                    <span aria-hidden="true">🚽</span> Dar descarga
-                </button>
-            </div>
-            <p class="throne-hint" id="throne-hint">Calcule seus ganhos no passo 1 para liberar o trono. 🔒</p>
-        </section>
+.card h2 {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 1.5rem;
+    color: var(--choco);
+    margin-bottom: 16px;
+}
+.card__head-flex { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.card__hint { font-size: .9rem; color: var(--ink-soft); margin-bottom: 4px; }
 
-        <!-- CARD 4 — CONQUISTAS -->
-        <section class="card" id="achievements-section">
-            <div class="card__step">★</div>
-            <h2>Conquistas <span aria-hidden="true">🏅</span></h2>
-            <div class="ach-grid" id="ach-grid"></div>
-        </section>
-    </main>
+/* ---------- Formulário ---------- */
+.field { margin-bottom: 16px; text-align: left; }
+.field label {
+    display: block;
+    font-weight: 800;
+    font-size: .92rem;
+    color: var(--choco-soft);
+    margin-bottom: 7px;
+}
+.input-wrap {
+    display: flex; align-items: center;
+    background: var(--cream-2);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--clay-inset);
+    padding: 0 16px;
+    transition: box-shadow .2s, transform .2s;
+}
+.input-wrap::before {
+    content: attr(data-prefix);
+    font-weight: 800;
+    color: var(--caramel);
+    margin-right: 10px;
+    font-size: 1rem;
+}
+.input-wrap:focus-within {
+    box-shadow: var(--clay-inset), 0 0 0 3px rgba(40, 196, 160, .45);
+}
+.input-wrap input {
+    flex: 1;
+    background: transparent;
+    border: none; outline: none;
+    padding: 14px 0;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--ink);
+}
+.input-wrap input::placeholder { color: #c8aa8f; font-weight: 600; }
+/* tira as setinhas do input number */
+input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
+input[type=number] { -moz-appearance: textfield; appearance: textfield; }
 
-    <footer class="footer">
-        <p class="footer__credit">Feito com 💩 &amp; ☕ por <strong>@GoldDroid22</strong></p>
-        <p class="footer__tiktok">Me siga no TikTok! 🎵</p>
-        <button id="wipe-data" class="footer__wipe" type="button">🧻 Zerar todos os dados</button>
-    </footer>
+.form-error {
+    color: var(--cherry);
+    font-weight: 700;
+    font-size: .88rem;
+    margin-bottom: 12px;
+    animation: shake .4s;
+}
+@keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+}
 
-    <!-- Camada de confete -->
-    <div id="confetti-root" class="confetti-root" aria-hidden="true"></div>
-    <!-- Toast de avisos -->
-    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+/* ---------- Botões ---------- */
+.btn {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 1.05rem;
+    border: none;
+    border-radius: 999px;
+    padding: 14px 22px;
+    cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    color: #fff;
+    transition: transform .15s var(--ease-bounce), box-shadow .2s, filter .2s;
+    -webkit-tap-highlight-color: transparent;
+}
+.btn:active { transform: translateY(2px) scale(.97); }
+.btn--lg { font-size: 1.15rem; padding: 16px 24px; }
+.btn--sm { font-size: .85rem; padding: 8px 16px; }
 
-    <script src="script.js"></script>
-</body>
-</html>
+.btn--primary {
+    width: 100%;
+    background: linear-gradient(180deg, var(--gold), var(--gold-deep));
+    box-shadow: 5px 6px 14px rgba(224, 138, 0, .45), inset 0 2px 2px rgba(255,255,255,.6);
+}
+.btn--primary:hover { filter: brightness(1.06); transform: translateY(-2px); }
+
+.btn--flush {
+    background: linear-gradient(180deg, #4bb3ff, #2b86d9);
+    box-shadow: 5px 6px 14px rgba(43, 134, 217, .45), inset 0 2px 2px rgba(255,255,255,.5);
+}
+.btn--flush:hover { filter: brightness(1.06); transform: translateY(-2px); }
+
+.btn--ghost {
+    background: var(--cream-2);
+    color: var(--mint-deep);
+    box-shadow: var(--clay-inset);
+}
+.btn--ghost:hover { color: var(--choco); }
+
+.btn:disabled {
+    background: #e8dccb;
+    color: #b6a591;
+    box-shadow: var(--clay-inset);
+    cursor: not-allowed;
+    filter: none; transform: none;
+}
+.btn.is-running {
+    background: linear-gradient(180deg, #ffb36b, #ff8c42);
+    box-shadow: 5px 6px 14px rgba(255, 140, 66, .45), inset 0 2px 2px rgba(255,255,255,.5);
+}
+
+/* ---------- Caixa de taxa (R$/min) ---------- */
+.rate {
+    margin-top: 22px;
+    text-align: center;
+    background: linear-gradient(170deg, #fff, var(--sand));
+    border-radius: var(--radius-sm);
+    padding: 18px;
+    box-shadow: var(--clay-inset);
+}
+.rate__label { display: block; font-weight: 800; color: var(--ink-soft); font-size: .85rem; text-transform: uppercase; letter-spacing: .5px; }
+.rate__value {
+    display: block;
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 700;
+    font-size: clamp(2.2rem, 9vw, 3rem);
+    line-height: 1.1;
+    color: var(--gold-deep);
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 2px 0 #fff;
+}
+.rate__value.pulse { animation: pulse-val .5s var(--ease-bounce); }
+.rate__unit { display: block; font-weight: 700; color: var(--choco-soft); }
+.rate__sub  { display: block; margin-top: 4px; font-size: .85rem; color: var(--ink-soft); }
+
+/* ---------- Adicionais / toggles ---------- */
+.bonus-content { margin-top: 14px; display: grid; gap: 18px; }
+.bonus-content[hidden] { display: none; }
+.bonus-group h3 {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 500;
+    font-size: 1rem;
+    color: var(--mint-deep);
+    margin-bottom: 10px;
+}
+.toggle-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+
+.toggle {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--cream-2);
+    padding: 10px 14px;
+    border-radius: 999px;
+    box-shadow: var(--clay-inset);
+    cursor: pointer;
+    user-select: none;
+    transition: transform .18s var(--ease-bounce), box-shadow .2s;
+}
+.toggle:hover { transform: translateY(-2px); }
+.toggle input { position: absolute; opacity: 0; pointer-events: none; }
+.toggle__track {
+    position: relative;
+    width: 44px; height: 24px;
+    background: #e2d2bf;
+    border-radius: 999px;
+    box-shadow: inset 1px 1px 3px rgba(120,80,40,.35);
+    transition: background .25s;
+    flex: none;
+}
+.toggle__thumb {
+    position: absolute; top: 3px; left: 3px;
+    width: 18px; height: 18px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 1px 1px 3px rgba(120,80,40,.4);
+    transition: transform .25s var(--ease-bounce);
+}
+.toggle__text { font-weight: 800; color: var(--choco-soft); font-size: .9rem; }
+.toggle input:checked ~ .toggle__track { background: linear-gradient(180deg, var(--mint), var(--mint-deep)); }
+.toggle input:checked ~ .toggle__track .toggle__thumb { transform: translateX(20px); }
+.toggle:has(input:checked) { box-shadow: var(--clay-inset), 0 0 0 2px rgba(40,196,160,.5); }
+.toggle:has(input:checked) .toggle__text { color: var(--mint-deep); }
+.toggle input:focus-visible ~ .toggle__track { outline: 3px solid rgba(40,196,160,.5); outline-offset: 2px; }
+
+/* ---------- Trono / cronômetro ---------- */
+.card--throne {
+    text-align: center;
+    background:
+        radial-gradient(120% 90% at 50% 0%, #fff8ec 0%, var(--cream) 55%);
+    border: 3px solid #fff;
+}
+.card--throne .card__step { background: linear-gradient(180deg, var(--gold), var(--gold-deep)); box-shadow: 4px 4px 10px rgba(224,138,0,.4), var(--clay-inset); }
+
+.mascot {
+    position: relative;
+    width: 130px; height: 130px;
+    margin: 6px auto 10px;
+    display: grid; place-items: center;
+}
+.mascot__poop {
+    font-size: 4.6rem;
+    filter: drop-shadow(0 8px 8px rgba(91,58,33,.35));
+    transition: transform .3s var(--ease-bounce);
+    z-index: 1;
+}
+.mascot__ring {
+    position: absolute; inset: 8px;
+    border-radius: 50%;
+    border: 4px dashed rgba(184, 122, 62, .35);
+    opacity: 0;
+    transition: opacity .3s;
+}
+.mascot.is-running .mascot__ring { opacity: 1; animation: spin 7s linear infinite; }
+.mascot.is-running .mascot__poop { animation: wiggle 1.3s ease-in-out infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes wiggle {
+    0%,100% { transform: rotate(-7deg) scale(1); }
+    50%     { transform: rotate(7deg) scale(1.06); }
+}
+.mascot.is-flushing .mascot__poop { animation: flush-away .9s ease-in forwards; }
+@keyframes flush-away {
+    0%   { transform: rotate(0) scale(1); opacity: 1; }
+    100% { transform: rotate(900deg) scale(0); opacity: 0; }
+}
+.mascot.celebrate .mascot__poop { animation: jump .6s var(--ease-bounce); }
+@keyframes jump {
+    0%,100% { transform: translateY(0) scale(1); }
+    40%     { transform: translateY(-26px) scale(1.18); }
+}
+
+.timer {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: clamp(2.6rem, 13vw, 4rem);
+    color: var(--choco);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 2px;
+    line-height: 1;
+    text-shadow: 0 2px 0 #fff;
+}
+
+.earnings { margin: 14px 0 6px; }
+.earnings__label { display: block; font-weight: 800; font-size: .8rem; text-transform: uppercase; letter-spacing: .5px; color: var(--ink-soft); }
+.earnings__value {
+    display: block;
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 700;
+    font-size: clamp(2.4rem, 11vw, 3.4rem);
+    color: var(--mint-deep);
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 2px 0 #fff;
+}
+
+/* ---------- Recompensa / progresso ---------- */
+.reward {
+    margin: 14px 0 20px;
+    background: var(--cream-2);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    box-shadow: var(--clay-inset);
+}
+.reward__line { font-weight: 800; color: var(--choco); font-size: 1rem; }
+.reward__line .big { font-size: 1.15rem; }
+.reward__bar {
+    margin: 10px 0 6px;
+    height: 14px;
+    background: #ecdcc8;
+    border-radius: 999px;
+    overflow: hidden;
+    box-shadow: inset 1px 1px 3px rgba(120,80,40,.35);
+}
+.reward__fill {
+    display: block; height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-deep));
+    border-radius: 999px;
+    transition: width .4s ease;
+}
+.reward__next { font-size: .85rem; color: var(--ink-soft); font-weight: 700; }
+
+.throne-actions { display: flex; gap: 12px; }
+.throne-actions .btn { flex: 1; }
+.throne-hint { margin-top: 12px; font-size: .85rem; color: var(--ink-soft); font-weight: 700; }
+.throne-hint.hidden { display: none; }
+
+/* ---------- Conquistas ---------- */
+.ach-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.ach {
+    text-align: center;
+    background: var(--cream-2);
+    border-radius: var(--radius-sm);
+    padding: 14px 8px;
+    box-shadow: var(--clay-inset);
+    transition: transform .25s var(--ease-bounce), box-shadow .25s;
+    cursor: default;
+}
+.ach__icon { font-size: 1.9rem; display: block; filter: grayscale(1); opacity: .4; transition: .3s; }
+.ach__name { display: block; margin-top: 6px; font-weight: 800; font-size: .78rem; color: var(--ink-soft); }
+.ach__desc { display: block; font-size: .68rem; color: #b09a85; line-height: 1.25; margin-top: 2px; }
+.ach.unlocked { box-shadow: var(--clay-shadow); transform: translateY(-2px); }
+.ach.unlocked .ach__icon { filter: none; opacity: 1; animation: pop-in .5s var(--ease-bounce); }
+.ach.unlocked .ach__name { color: var(--choco); }
+@keyframes pop-in { 0% { transform: scale(0); } 70% { transform: scale(1.3); } 100% { transform: scale(1); } }
+
+/* ---------- Rodapé ---------- */
+.footer { text-align: center; padding: 30px 20px 50px; color: var(--choco-soft); }
+.footer__credit { font-weight: 800; }
+.footer__credit strong { color: var(--gold-deep); }
+.footer__tiktok { font-size: .9rem; margin-top: 2px; }
+.footer__wipe {
+    margin-top: 14px;
+    background: transparent;
+    border: 2px dashed rgba(184,122,62,.5);
+    color: var(--ink-soft);
+    border-radius: 999px;
+    padding: 8px 16px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: .8rem;
+    cursor: pointer;
+    transition: .2s;
+}
+.footer__wipe:hover { border-color: var(--cherry); color: var(--cherry); }
+
+/* ---------- Confete de emoji ---------- */
+.confetti-root { position: fixed; inset: 0; z-index: 60; pointer-events: none; overflow: hidden; }
+.confetti {
+    position: absolute;
+    top: -8vh;
+    font-size: 1.8rem;
+    will-change: transform, opacity;
+    animation: confetti-fall linear forwards;
+}
+@keyframes confetti-fall {
+    0%   { transform: translateY(0) rotate(0); opacity: 1; }
+    100% { transform: translateY(112vh) rotate(720deg); opacity: .9; }
+}
+
+/* ---------- Toast ---------- */
+.toast {
+    position: fixed;
+    left: 50%; bottom: 30px;
+    transform: translate(-50%, 140%);
+    z-index: 70;
+    background: var(--choco);
+    color: #fff;
+    font-weight: 800;
+    padding: 14px 22px;
+    border-radius: 999px;
+    box-shadow: 0 12px 30px rgba(91,58,33,.4);
+    max-width: 90vw; text-align: center;
+    transition: transform .45s var(--ease-bounce);
+}
+.toast.show { transform: translate(-50%, 0); }
+
+/* ---------- Responsivo ---------- */
+@media (max-width: 480px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .card { padding: 24px 18px; }
+    .throne-actions { flex-direction: column; }
+}
+
+/* ---------- Acessibilidade: menos movimento ---------- */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+        scroll-behavior: auto !important;
+    }
+    .bg-emojis, .blob { display: none; }
+}

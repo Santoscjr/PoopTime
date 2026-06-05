@@ -3,165 +3,229 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PoopTime</title>
+    <meta name="theme-color" content="#ffd2a6">
+    <meta name="description" content="PoopTime — descubra quanto dinheiro você fatura sentado no trono durante o expediente. 🚽💸">
+    <title>PoopTime 💩 — Fature no Trono</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,700&display=swap" rel="stylesheet">
+
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💩</text></svg>">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- From Uiverse.io by ariba_9087 -->
-    <div class="container"></div>
-    <div class="content">
-        <header>
-            <h1>PoopTime</h1>
-            <p>Calcule o valor do seu tempo no banheiro! 🚽</p>
-        </header>
-        <main>
-        <div class="card">
-            <section id="input-section">
-                <h2>Insira seus dados 💰</h2>
-                <form id="data-form">
-                    <label for="salary">Salário mensal (R$):</label>
-                    <input type="text" id="salary" placeholder="Ex: 3000,00" required>
-                    
-                    <label for="hours">Horas trabalhadas por semana:</label>
-                    <input type="number" id="hours" placeholder="Ex: 40" required>
-                    
-                    <!-- From Uiverse.io by dpaulos6 -->
-                    <button type="submit" class="c-button c-button--gooey">Calcular
-                        <div class="c-button__blobs">
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                        </div>
-                    </button>
-                </form>
-                <p id="value-per-minute">Valor por minuto: R$ 0.00</p>
-            </section>
+    <!-- Atmosfera de fundo -->
+    <div class="bg" aria-hidden="true">
+        <span class="blob blob--gold"></span>
+        <span class="blob blob--mint"></span>
+        <span class="blob blob--peach"></span>
+        <div class="bg-emojis">
+            <span style="--d:0s;  --x:8vw;  --s:1.1">💩</span>
+            <span style="--d:5s;  --x:22vw; --s:.7">🪙</span>
+            <span style="--d:2s;  --x:42vw; --s:.9">🧻</span>
+            <span style="--d:8s;  --x:63vw; --s:1.2">💰</span>
+            <span style="--d:3s;  --x:78vw; --s:.8">🪙</span>
+            <span style="--d:6s;  --x:90vw; --s:1">💩</span>
         </div>
+    </div>
 
-        <div class="card">
-            <section id="bonuses-section">
-                <h2>Adicionais e Horas Extras 💼 <button id="toggle-bonuses" class="c-button c-button--gooey">Mostrar
-                    <div class="c-button__blobs">
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                    </div>
-                </button></h2>
-                <div id="bonus-content" class="bonus-content hidden">
-                    <div class="bonus-group">
-                        <h3>Horas Extras</h3>
-                        <div class="bonus-toggles">
-                            <div class="toggle-item">
-                                <label for="overtime-50-checkbox">50%</label>
-                                <label class="switch">
-                                    <input type="checkbox" class="checkbox" id="overtime-50-checkbox">
-                                    <div class="slider"></div>
-                                </label>
-                            </div>
-                            <div class="toggle-item">
-                                <label for="overtime-100-checkbox">100%</label>
-                                <label class="switch">
-                                    <input type="checkbox" class="checkbox" id="overtime-100-checkbox">
-                                    <div class="slider"></div>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
+    <!-- Botão de som -->
+    <button id="sound-toggle" class="sound-toggle" type="button" aria-label="Ativar ou desativar sons" title="Sons">🔊</button>
 
-                    <div class="bonus-group">
-                        <h3>Adicionais</h3>
-                        <div class="bonus-toggles">
-                            <div class="toggle-item">
-                                <label for="danger-checkbox">Periculosidade 30%</label>
-                                <label class="switch">
-                                    <input type="checkbox" class="checkbox" id="danger-checkbox">
-                                    <div class="slider"></div>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
+    <header class="hero">
+        <div class="hero__badge" aria-hidden="true">
+            <span class="hero__poop">💩</span>
+            <span class="hero__coin">🪙</span>
+        </div>
+        <h1 class="hero__title">Poop<span>Time</span></h1>
+        <p class="hero__tag">Descubra quanto você <strong>fatura sentado no trono</strong> 🚽💸</p>
+    </header>
 
-                    <div class="bonus-group">
-                        <h3>Insalubridade</h3>
-                        <div class="bonus-toggles">
-                            <div class="toggle-item">
-                                <label for="unhealthy-max-checkbox">Máxima 40%</label>
-                                <label class="switch">
-                                    <input type="checkbox" class="checkbox" id="unhealthy-max-checkbox">
-                                    <div class="slider"></div>
-                                </label>
-                            </div>
-                            <div class="toggle-item">
-                                <label for="unhealthy-med-checkbox">Média 20%</label>
-                                <label class="switch">
-                                    <input type="checkbox" class="checkbox" id="unhealthy-med-checkbox">
-                                    <div class="slider"></div>
-                                </label>
-                            </div>
-                            <div class="toggle-item">
-                                <label for="unhealthy-min-checkbox">Mínima 10%</label>
-                                <label class="switch">
-                                    <input type="checkbox" class="checkbox" id="unhealthy-min-checkbox">
-                                    <div class="slider"></div>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
+    <!-- Barra de estatísticas (recordes de todos os tempos) -->
+    <section class="stats" aria-label="Suas estatísticas de todos os tempos">
+        <div class="stat">
+            <span class="stat__icon">💰</span>
+            <span class="stat__value" id="stat-total">R$ 0,00</span>
+            <span class="stat__label">Faturado no total</span>
+        </div>
+        <div class="stat">
+            <span class="stat__icon">🚽</span>
+            <span class="stat__value" id="stat-sessions">0</span>
+            <span class="stat__label">Idas ao trono</span>
+        </div>
+        <div class="stat">
+            <span class="stat__icon">⏱️</span>
+            <span class="stat__value" id="stat-time">00:00:00</span>
+            <span class="stat__label">Tempo total</span>
+        </div>
+        <div class="stat">
+            <span class="stat__icon">🏆</span>
+            <span class="stat__value" id="stat-record">R$ 0,00</span>
+            <span class="stat__label">Recorde numa ida</span>
+        </div>
+    </section>
 
-                    <div class="bonus-group">
-                        <h3>Adicional Noturno</h3>
-                        <div class="bonus-toggles">
-                            <div class="toggle-item">
-                                <label for="night-checkbox">Noturno 20%</label>
-                                <label class="switch">
-                                    <input type="checkbox" class="checkbox" id="night-checkbox">
-                                    <div class="slider"></div>
-                                </label>
-                            </div>
-                        </div>
+    <main>
+        <!-- CARD 1 — DADOS -->
+        <section class="card" id="input-section">
+            <div class="card__step">1</div>
+            <h2>Seus ganhos <span aria-hidden="true">💵</span></h2>
+            <form id="data-form" novalidate>
+                <div class="field">
+                    <label for="salary">Salário mensal</label>
+                    <div class="input-wrap" data-prefix="R$">
+                        <input type="text" id="salary" inputmode="decimal" placeholder="3.000,00" autocomplete="off" required>
                     </div>
                 </div>
-            </section>
-        </div>
 
-        <div class="card">
-            <section id="timer-section">
-                <h2>Cronômetro 💩</h2>
-                <p id="timer-display">00:00:00</p>
-                <p id="accumulated-value">Valor acumulado: R$ 0.00</p>
-                <button id="start-btn" disabled>Iniciar</button>
-                <button id="stop-btn" disabled>Parar</button>
-                <button id="reset-btn">Reset</button>
-            </section>
-        </div>
-        </main>
-    </div>
-    <footer>
-        <p>Desenvolvido por @GoldDroid22</p>
-        <p>Sigam no TikTok!</p>
+                <div class="field">
+                    <label for="hours">Horas trabalhadas por semana</label>
+                    <div class="input-wrap" data-prefix="⏰">
+                        <input type="number" id="hours" inputmode="numeric" placeholder="44" min="1" max="80" step="1" required>
+                    </div>
+                </div>
+
+                <p class="form-error" id="form-error" role="alert" hidden></p>
+
+                <button type="submit" class="btn btn--primary">
+                    <span>Calcular meu trono</span> <span aria-hidden="true">🧮</span>
+                </button>
+            </form>
+
+            <div class="rate" id="rate-box">
+                <span class="rate__label">Você fatura</span>
+                <span class="rate__value" id="rate-min">R$ 0,00</span>
+                <span class="rate__unit">por minuto sentado 💩</span>
+                <span class="rate__sub" id="rate-extra">preencha seus dados para começar</span>
+            </div>
+        </section>
+
+        <!-- CARD 2 — ADICIONAIS -->
+        <section class="card" id="bonuses-section">
+            <div class="card__step">2</div>
+            <h2 class="card__head-flex">
+                <span>Adicionais da CLT <span aria-hidden="true">💼</span></span>
+                <button id="toggle-bonuses" class="btn btn--ghost btn--sm" type="button" aria-expanded="false">Mostrar</button>
+            </h2>
+            <p class="card__hint">Trabalha em condição especial? Some os adicionais e veja o trono render mais. 😏</p>
+
+            <div id="bonus-content" class="bonus-content" hidden>
+                <div class="bonus-group">
+                    <h3>🕒 Horas extras</h3>
+                    <div class="toggle-grid">
+                        <label class="toggle">
+                            <input type="checkbox" data-bonus="overtime50" data-rate="0.5" data-group="overtime">
+                            <span class="toggle__track"><span class="toggle__thumb"></span></span>
+                            <span class="toggle__text">50%</span>
+                        </label>
+                        <label class="toggle">
+                            <input type="checkbox" data-bonus="overtime100" data-rate="1" data-group="overtime">
+                            <span class="toggle__track"><span class="toggle__thumb"></span></span>
+                            <span class="toggle__text">100%</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="bonus-group">
+                    <h3>⚠️ Periculosidade</h3>
+                    <div class="toggle-grid">
+                        <label class="toggle">
+                            <input type="checkbox" data-bonus="danger" data-rate="0.3">
+                            <span class="toggle__track"><span class="toggle__thumb"></span></span>
+                            <span class="toggle__text">30%</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="bonus-group">
+                    <h3>☣️ Insalubridade</h3>
+                    <div class="toggle-grid">
+                        <label class="toggle">
+                            <input type="checkbox" data-bonus="unhealthyMax" data-rate="0.4" data-group="unhealthy">
+                            <span class="toggle__track"><span class="toggle__thumb"></span></span>
+                            <span class="toggle__text">Máxima 40%</span>
+                        </label>
+                        <label class="toggle">
+                            <input type="checkbox" data-bonus="unhealthyMed" data-rate="0.2" data-group="unhealthy">
+                            <span class="toggle__track"><span class="toggle__thumb"></span></span>
+                            <span class="toggle__text">Média 20%</span>
+                        </label>
+                        <label class="toggle">
+                            <input type="checkbox" data-bonus="unhealthyMin" data-rate="0.1" data-group="unhealthy">
+                            <span class="toggle__track"><span class="toggle__thumb"></span></span>
+                            <span class="toggle__text">Mínima 10%</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="bonus-group">
+                    <h3>🌙 Adicional noturno</h3>
+                    <div class="toggle-grid">
+                        <label class="toggle">
+                            <input type="checkbox" data-bonus="night" data-rate="0.2">
+                            <span class="toggle__track"><span class="toggle__thumb"></span></span>
+                            <span class="toggle__text">Noturno 20%</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CARD 3 — TRONO / CRONÔMETRO -->
+        <section class="card card--throne" id="timer-section">
+            <div class="card__step">3</div>
+            <h2>O Trono <span aria-hidden="true">👑</span></h2>
+
+            <div class="mascot" id="mascot" aria-hidden="true">
+                <span class="mascot__poop">💩</span>
+                <span class="mascot__ring"></span>
+            </div>
+
+            <p class="timer" id="timer-display">00:00:00</p>
+
+            <div class="earnings">
+                <span class="earnings__label">Faturado nesta sentada</span>
+                <span class="earnings__value" id="accumulated-value">R$ 0,00</span>
+            </div>
+
+            <!-- Recompensa / progresso -->
+            <div class="reward" id="reward">
+                <p class="reward__line" id="reward-current">Comece a contar pra ver o que dá pra comprar 🍔</p>
+                <div class="reward__bar"><span class="reward__fill" id="reward-fill"></span></div>
+                <p class="reward__next" id="reward-next"></p>
+            </div>
+
+            <div class="throne-actions">
+                <button id="start-btn" class="btn btn--primary btn--lg" type="button" disabled>
+                    <span aria-hidden="true">▶️</span> <span id="start-label">Sentar</span>
+                </button>
+                <button id="flush-btn" class="btn btn--flush btn--lg" type="button" disabled>
+                    <span aria-hidden="true">🚽</span> Dar descarga
+                </button>
+            </div>
+            <p class="throne-hint" id="throne-hint">Calcule seus ganhos no passo 1 para liberar o trono. 🔒</p>
+        </section>
+
+        <!-- CARD 4 — CONQUISTAS -->
+        <section class="card" id="achievements-section">
+            <div class="card__step">★</div>
+            <h2>Conquistas <span aria-hidden="true">🏅</span></h2>
+            <div class="ach-grid" id="ach-grid"></div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p class="footer__credit">Feito com 💩 &amp; ☕ por <strong>@GoldDroid22</strong></p>
+        <p class="footer__tiktok">Me siga no TikTok! 🎵</p>
+        <button id="wipe-data" class="footer__wipe" type="button">🧻 Zerar todos os dados</button>
     </footer>
-    <svg
-        style="display: block; height: 0; width: 0;"
-        version="1.1"
-        xmlns="http://www.w3.org/2000/svg"
-    >
-        <defs>
-            <filter id="goo">
-                <feGaussianBlur
-                    result="blur"
-                    stdDeviation="10"
-                    in="SourceGraphic"
-                ></feGaussianBlur>
-                <feColorMatrix
-                    result="goo"
-                    values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7"
-                    mode="matrix"
-                    in="blur"
-                ></feColorMatrix>
-                <feBlend in2="goo" in="SourceGraphic"></feBlend>
-            </filter>
-        </defs>
-    </svg>
+
+    <!-- Camada de confete -->
+    <div id="confetti-root" class="confetti-root" aria-hidden="true"></div>
+    <!-- Toast de avisos -->
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
     <script src="script.js"></script>
 </body>
 </html>

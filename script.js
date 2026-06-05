@@ -1,195 +1,195 @@
+/* ===========================================================
+   PoopTime ⏱️💩 — lógica do trono
+   =========================================================== */
 
-// Variáveis globais
+'use strict';
+
+/* ---------- Constantes ---------- */
+const WEEKS_PER_MONTH = 4.345; // média real de semanas por mês (52,14 / 12)
+
+// Recompensas em ordem crescente de preço (valores aproximados 2026)
+const REWARDS = [
+    { emoji: '☕', name: 'um cafezinho',          price: 5   },
+    { emoji: '🧀', name: 'um pão de queijo',      price: 8   },
+    { emoji: '🍗', name: 'uma coxinha',           price: 11  },
+    { emoji: '🥟', name: 'um pastel',             price: 15  },
+    { emoji: '🍫', name: 'uma barra de chocolate', price: 20 },
+    { emoji: '🍺', name: 'uma gelada',            price: 26  },
+    { emoji: '🍔', name: 'um X-burguer',          price: 32  },
+    { emoji: '🍱', name: 'uma marmita',           price: 40  },
+    { emoji: '🎬', name: 'um cinema com pipoca',  price: 55  },
+    { emoji: '🍕', name: 'uma pizza inteira',     price: 75  },
+    { emoji: '👕', name: 'uma camiseta nova',     price: 95  },
+    { emoji: '🍣', name: 'um rodízio japonês',    price: 130 },
+    { emoji: '👟', name: 'um tênis maneiro',      price: 230 },
+    { emoji: '🎧', name: 'um fone top',           price: 500 },
+    { emoji: '📱', name: 'um celular novo',       price: 1200 },
+];
+
+// Conquistas
+const ACHIEVEMENTS = [
+    { id: 'first',    icon: '🥇', name: 'Primeira Sentada', desc: 'Dê sua 1ª descarga',        test: s => s.sessions >= 1 },
+    { id: 'serial',   icon: '💩', name: 'Produção em Série', desc: '10 idas ao trono',          test: s => s.sessions >= 10 },
+    { id: 'marathon', icon: '⏱️', name: 'Maratonista',       desc: 'Uma sentada de 15+ min',    test: s => s.bestTime >= 900 },
+    { id: 'gold',     icon: '💰', name: 'Minerador de Ouro', desc: 'R$ 50 faturados no total',  test: s => s.total >= 50 },
+    { id: 'king',     icon: '👑', name: 'Rei do Trono',      desc: 'R$ 200 faturados no total', test: s => s.total >= 200 },
+    { id: 'owl',      icon: '🌙', name: 'Coruja do Trono',   desc: 'Fature com adicional noturno', test: s => !!s.flags.night },
+];
+
+const STORAGE_KEY = 'pooptime.v2';
+const CONFETTI_EMOJIS = ['💩', '🪙', '💰', '✨', '🧻'];
+
+/* ---------- Estado ---------- */
 let valuePerMinute = 0;
-let timerInterval = null;
-let startTime = null;
-let accumulatedValue = 0;
+let bonusPct = 0;
+let nightActive = false;
 
-// Variáveis para bônus
-let bonuses = {
-    overtime50: false,
-    overtime100: false,
-    danger: false,
-    unhealthyMax: false,
-    unhealthyMed: false,
-    unhealthyMin: false,
-    night: false
+let running = false;
+let startTs = 0;
+let elapsedBefore = 0;       // ms acumulados antes da pausa atual
+let tickTimer = null;
+let sessionMaxRewardIdx = -1;
+
+let muted = false;
+
+let stats = {
+    total: 0, sessions: 0, totalTime: 0,
+    record: 0, bestTime: 0,
+    flags: { night: false },
+    unlocked: [],
 };
 
-// Elementos do DOM
-const form = document.getElementById('data-form');
-const salaryInput = document.getElementById('salary');
-const hoursInput = document.getElementById('hours');
-const valueDisplay = document.getElementById('value-per-minute');
-const timerDisplay = document.getElementById('timer-display');
+/* ---------- Atalhos ---------- */
+const $ = id => document.getElementById(id);
+const fmtBRL = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+const BRL = n => fmtBRL.format(isFinite(n) ? n : 0);
 
-const accumulatedDisplay = document.getElementById('accumulated-value');
-const startBtn = document.getElementById('start-btn');
-const stopBtn = document.getElementById('stop-btn');
-const resetBtn = document.getElementById('reset-btn');
+const els = {
+    form: $('data-form'), salary: $('salary'), hours: $('hours'), error: $('form-error'),
+    rateMin: $('rate-min'), rateExtra: $('rate-extra'),
+    toggleBonuses: $('toggle-bonuses'), bonusContent: $('bonus-content'),
+    mascot: $('mascot'), timer: $('timer-display'), accumulated: $('accumulated-value'),
+    rewardCurrent: $('reward-current'), rewardFill: $('reward-fill'), rewardNext: $('reward-next'),
+    startBtn: $('start-btn'), startLabel: $('start-label'), flushBtn: $('flush-btn'), throneHint: $('throne-hint'),
+    achGrid: $('ach-grid'),
+    statTotal: $('stat-total'), statSessions: $('stat-sessions'), statTime: $('stat-time'), statRecord: $('stat-record'),
+    soundToggle: $('sound-toggle'), wipe: $('wipe-data'),
+    confettiRoot: $('confetti-root'), toast: $('toast'),
+};
+const startIcon = els.startBtn.querySelector('span[aria-hidden]');
 
-// Elementos dos botões de bônus
-const toggleBonusesBtn = document.getElementById('toggle-bonuses');
-const bonusContent = document.getElementById('bonus-content');
-const overtime50Checkbox = document.getElementById('overtime-50-checkbox');
-const overtime100Checkbox = document.getElementById('overtime-100-checkbox');
-const dangerCheckbox = document.getElementById('danger-checkbox');
-const unhealthyMaxCheckbox = document.getElementById('unhealthy-max-checkbox');
-const unhealthyMedCheckbox = document.getElementById('unhealthy-med-checkbox');
-const unhealthyMinCheckbox = document.getElementById('unhealthy-min-checkbox');
-const nightCheckbox = document.getElementById('night-checkbox');
-
-// Função para calcular o valor por minuto
-function calculateValuePerMinute(salary, hours) {
-    // Salário mensal dividido por (horas semanais * 4 semanas) dividido por 60 minutos
-    return (salary / (hours * 4)) / 60;
+/* ===========================================================
+   Persistência
+   =========================================================== */
+function save() {
+    const bonuses = [...document.querySelectorAll('input[data-bonus]:checked')].map(i => i.dataset.bonus);
+    const data = {
+        stats, muted, bonuses,
+        salary: els.salary.value,
+        hours: els.hours.value,
+        session: { elapsed: currentElapsedMs() }, // sempre salvo como pausado
+    };
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) { /* ignora */ }
 }
 
-// Função para formatar tempo em HH:MM:SS
-function formatTime(seconds) {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = seconds % 60;
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-}
+function load() {
+    let data = {};
+    try { data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch (e) { data = {}; }
 
-// Função para calcular os bônus
-function calculateBonuses(baseValue) {
-    let totalBonus = 0;
-
-    if (bonuses.overtime50) totalBonus += baseValue * 0.5;
-    if (bonuses.overtime100) totalBonus += baseValue * 1.0;
-    if (bonuses.danger) totalBonus += baseValue * 0.3;
-    if (bonuses.unhealthyMax) totalBonus += baseValue * 0.4;
-    if (bonuses.unhealthyMed) totalBonus += baseValue * 0.2;
-    if (bonuses.unhealthyMin) totalBonus += baseValue * 0.1;
-    if (bonuses.night) totalBonus += baseValue * 0.2;
-
-    return totalBonus;
-}
-
-// Função para atualizar o valor por minuto com bônus
-function updateValuePerMinute() {
-    const salary = parseFloat(salaryInput.value.replace(/,/g, '.'));
-    const hours = parseFloat(hoursInput.value);
-
-    if (salary > 0 && hours > 0) {
-        const baseValue = calculateValuePerMinute(salary, hours);
-        const bonusValue = calculateBonuses(baseValue);
-        valuePerMinute = baseValue + bonusValue;
-        valueDisplay.textContent = `Valor por minuto: R$ ${valuePerMinute.toFixed(2)}`;
+    if (data.stats) stats = { ...stats, ...data.stats, flags: { ...stats.flags, ...(data.stats.flags || {}) } };
+    muted = !!data.muted;
+    if (data.salary) els.salary.value = data.salary;
+    if (data.hours) els.hours.value = data.hours;
+    if (Array.isArray(data.bonuses)) {
+        data.bonuses.forEach(key => {
+            const el = document.querySelector(`input[data-bonus="${key}"]`);
+            if (el) el.checked = true;
+        });
     }
+    if (data.session && data.session.elapsed > 0) elapsedBefore = data.session.elapsed;
 }
 
-// Função para alternar bônus
-function toggleBonus(bonusKey) {
-    bonuses[bonusKey] = !bonuses[bonusKey];
-    updateValuePerMinute();
+/* ===========================================================
+   Cálculo
+   =========================================================== */
+function parseBRNumber(str) {
+    if (!str) return NaN;
+    str = String(str).trim().replace(/[^\d.,]/g, '');
+    if (str.includes(',')) {
+        str = str.replace(/\./g, '').replace(',', '.');     // 3.000,00 -> 3000.00
+    } else if ((str.match(/\./g) || []).length > 1) {
+        str = str.replace(/\./g, '');                        // 1.000.000 -> 1000000
+    }
+    return parseFloat(str);
 }
 
-// Função para atualizar o display do timer e valor acumulado
-function updateTimer() {
-    const now = Date.now();
-    const elapsedSeconds = Math.floor((now - startTime) / 1000);
-    const elapsedMinutes = elapsedSeconds / 60;
-    const elapsedValue = elapsedMinutes * valuePerMinute;
-
-    timerDisplay.textContent = formatTime(elapsedSeconds);
-    accumulatedDisplay.textContent = `Valor acumulado: R$ ${elapsedValue.toFixed(2)}`;
+function recomputeBonuses() {
+    let sumRates = 0;
+    nightActive = false;
+    document.querySelectorAll('input[data-bonus]:checked').forEach(i => {
+        sumRates += parseFloat(i.dataset.rate) || 0;
+        if (i.dataset.bonus === 'night') nightActive = true;
+    });
+    bonusPct = Math.round(sumRates * 100);
+    return 1 + sumRates;
 }
 
-// Event listener para o formulário
-form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const salary = parseFloat(salaryInput.value.replace(/,/g, '.'));
-    const hours = parseFloat(hoursInput.value);
+function updateRate() {
+    const salary = parseBRNumber(els.salary.value);
+    const hours = parseFloat(els.hours.value);
+    const multiplier = recomputeBonuses();
 
     if (salary > 0 && hours > 0) {
-        updateValuePerMinute();
-        startBtn.disabled = false;
+        const base = salary / (hours * WEEKS_PER_MONTH * 60);
+        valuePerMinute = base * multiplier;
+        const perHour = valuePerMinute * 60;
+        flashPulse(els.rateMin);
+        els.rateMin.textContent = BRL(valuePerMinute);
+        els.rateExtra.textContent = bonusPct > 0
+            ? `≈ ${BRL(perHour)}/hora • +${bonusPct}% de adicionais 🔥`
+            : `≈ ${BRL(perHour)}/hora trabalhada`;
+        unlockThrone(true);
     } else {
-        alert('Por favor, insira valores válidos.');
+        valuePerMinute = 0;
+        els.rateMin.textContent = BRL(0);
+        els.rateExtra.textContent = 'preencha seus dados para começar';
+        unlockThrone(false);
     }
-});
+}
 
-// Event listener para o botão Iniciar
-startBtn.addEventListener('click', () => {
-    if (valuePerMinute > 0) {
-        startTime = Date.now();
-        timerInterval = setInterval(updateTimer, 1000);
-        startBtn.disabled = true;
-        stopBtn.disabled = false;
-    }
-});
+function unlockThrone(enabled) {
+    const hasSession = elapsedBefore > 0;
+    els.startBtn.disabled = !enabled;
+    els.flushBtn.disabled = !(enabled && (hasSession || running));
+    els.throneHint.classList.toggle('hidden', enabled);
+}
 
-// Event listener para o botão Parar
-stopBtn.addEventListener('click', () => {
-    if (timerInterval) {
-        clearInterval(timerInterval);
-        timerInterval = null;
-        startBtn.disabled = false;
-        stopBtn.disabled = true;
-    }
-});
+/* ===========================================================
+   Cronômetro
+   =========================================================== */
+function currentElapsedMs() {
+    return elapsedBefore + (running ? Date.now() - startTs : 0);
+}
 
-// Event listener para o botão Reset
-resetBtn.addEventListener('click', () => {
-    if (timerInterval) {
-        clearInterval(timerInterval);
-        timerInterval = null;
-        startBtn.disabled = false;
-        stopBtn.disabled = true;
-    }
-    timerDisplay.textContent = '00:00:00';
-    accumulatedDisplay.textContent = 'Valor acumulado: R$ 0.00';
-});
+function formatTime(totalSeconds) {
+    const h = Math.floor(totalSeconds / 3600);
+    const m = Math.floor((totalSeconds % 3600) / 60);
+    const s = Math.floor(totalSeconds % 60);
+    return [h, m, s].map(n => String(n).padStart(2, '0')).join(':');
+}
 
-// Event listener para o botão de toggle de bônus
-toggleBonusesBtn.addEventListener('click', () => {
-    bonusContent.classList.toggle('hidden');
-    toggleBonusesBtn.textContent = bonusContent.classList.contains('hidden') ? 'Mostrar' : 'Ocultar';
-});
+function render() {
+    const ms = currentElapsedMs();
+    const seconds = ms / 1000;
+    const value = (ms / 60000) * valuePerMinute;
+    els.timer.textContent = formatTime(seconds);
+    els.accumulated.textContent = BRL(value);
+    updateReward(value);
+}
 
-// Event listeners para os toggles de bônus
-overtime50Checkbox.addEventListener('change', () => {
-    toggleBonus('overtime50');
-    // Desativar overtime100 se overtime50 for ativado
-    if (bonuses.overtime50) {
-        bonuses.overtime100 = false;
-        overtime100Checkbox.checked = false;
-    }
-});
-overtime100Checkbox.addEventListener('change', () => {
-    toggleBonus('overtime100');
-    // Desativar overtime50 se overtime100 for ativado
-    if (bonuses.overtime100) {
-        bonuses.overtime50 = false;
-        overtime50Checkbox.checked = false;
-    }
-});
-dangerCheckbox.addEventListener('change', () => toggleBonus('danger'));
-unhealthyMaxCheckbox.addEventListener('change', () => {
-    toggleBonus('unhealthyMax');
-    // Desativar outros níveis de insalubridade
-    bonuses.unhealthyMed = false;
-    bonuses.unhealthyMin = false;
-    unhealthyMedCheckbox.checked = false;
-    unhealthyMinCheckbox.checked = false;
-});
-unhealthyMedCheckbox.addEventListener('change', () => {
-    toggleBonus('unhealthyMed');
-    // Desativar outros níveis de insalubridade
-    bonuses.unhealthyMax = false;
-    bonuses.unhealthyMin = false;
-    unhealthyMaxCheckbox.checked = false;
-    unhealthyMinCheckbox.checked = false;
-});
-unhealthyMinCheckbox.addEventListener('change', () => {
-    toggleBonus('unhealthyMin');
-    // Desativar outros níveis de insalubridade
-    bonuses.unhealthyMax = false;
-    bonuses.unhealthyMed = false;
-    unhealthyMaxCheckbox.checked = false;
-    unhealthyMedCheckbox.checked = false;
-});
-nightCheckbox.addEventListener('change', () => toggleBonus('night'));
+function startTimer() {
+    if (running || valuePerMinute <= 0) return;
+    ensureAudio();
+    running = true;
+    startTs = Date.now();
+    tickTimer = setInterval(render, 100);
